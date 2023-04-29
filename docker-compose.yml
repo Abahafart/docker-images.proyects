@@ -1,0 +1,83 @@
+version: "3.8"
+services:
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - 'kafka'
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - 9092:9092
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+    networks:
+      - 'kafka'
+
+  databaseLibraryPostgres:
+    image: postgres:15.2-alpine3.17
+    environment:
+      - POSTGRES_USER=library-user
+      - POSTGRES_PASSWORD=libraryPassPostgresql1
+      - POSTGRES_DB=libraryDb
+    ports:
+      - "3539:5432"
+    restart: always
+    networks:
+      - 'postgresql'
+  
+  testPostgresql:
+    image: postgres:15.2-alpine3.17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=example-sbl
+    ports:
+      - "3939:5432"
+    restart: always
+    networks:
+      - 'postgresql'
+
+  mysql:
+    image: mysql:5.7
+    platform: linux/x86_64
+    ports:
+      - "3333:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpw
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysqlpw
+      - MYSQL_DATABASE=library
+    networks:
+      - 'mysql'
+    restart: always
+  cache:
+    image: redis:7.0.11-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    networks:
+      - 'redis'
+
+networks:
+  kafka:
+    driver: bridge
+  mysql:
+    driver: bridge
+  redis:
+    driver: bridge
+  postgresql:
+    driver: bridge
