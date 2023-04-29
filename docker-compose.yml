@@ -32,7 +32,7 @@ services:
       - POSTGRES_PASSWORD=libraryPassPostgresql1
       - POSTGRES_DB=libraryDb
     ports:
-      - "3539:5432"
+      - "3639:5432"
     restart: always
     networks:
       - 'postgresql'
