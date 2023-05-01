@@ -64,10 +64,24 @@ services:
       - 'mysql'
     restart: always
   mysqlDb:
-    image: mysql:5.7
+    image: mysql:8.0.33
     platform: linux/x86_64
     ports:
       - "4444:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpw
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysqlpw
+      - MYSQL_DATABASE=user-library
+    networks:
+      - 'mysql'
+    restart: always
+  mysqlLatest:
+    image: mysql:latest
+    platform: linux/x86_64
+    ports:
+      - "5555:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=rootpw
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
