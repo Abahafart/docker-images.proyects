@@ -63,6 +63,20 @@ services:
     networks:
       - 'mysql'
     restart: always
+  mysqlDb:
+    image: mysql:5.7
+    platform: linux/x86_64
+    ports:
+      - "4444:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpw
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysqlpw
+      - MYSQL_DATABASE=library
+    networks:
+      - 'mysql'
+    restart: always
   cache:
     image: redis:7.0.11-alpine
     restart: always
